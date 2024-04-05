@@ -1,27 +1,41 @@
-// Get elements
-const messageField = document.getElementById("messageInput");
-const messageList = document.getElementById("messages");
-const sendButton = document.getElementById("sendButton");
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAW7tayOKqL7g-fHLeQ9he_SMLLrFtzQB0",
+    authDomain: "divine-steps-chatroom.firebaseapp.com",
+    projectId: "divine-steps-chatroom",
+    storageBucket: "divine-steps-chatroom.appspot.com",
+    messagingSenderId: "542426854016",
+    appId: "1:542426854016:web:9ec3777db3fd2343266c65"
+};
 
-// Get a reference to the Firebase database
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 const messagesRef = database.ref("messages");
 
-// Listen for changes in the database and display messages
-messagesRef.on("child_added", (snapshot) => {
-    const message = snapshot.val();
-    const listItem = document.createElement("div");
-    listItem.textContent = message.text;
-    messageList.appendChild(listItem);
-});
-
-// Send message to the database
-sendButton.addEventListener("click", () => {
-    const message = messageField.value;
-    if (message.trim() !== "") {
-        messagesRef.push({
-            text: message
+new Vue({
+    el: '#app',
+    data: {
+        messages: [],
+        messageInput: ''
+    },
+    methods: {
+        sendMessage() {
+            const message = this.messageInput.trim();
+            if (message) {
+                messagesRef.push({
+                    username: "Anonymous",
+                    text: message
+                });
+                this.messageInput = '';
+            }
+        }
+    },
+    mounted() {
+        messagesRef.on("child_added", (snapshot) => {
+            const message = snapshot.val();
+            this.messages.push(message);
         });
-        messageField.value = "";
     }
 });
