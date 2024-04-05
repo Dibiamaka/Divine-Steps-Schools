@@ -30,12 +30,18 @@ new Vue({
                 });
                 this.messageInput = '';
             }
+        },
+        scrollToBottom() {
+            // Scroll the message container to the bottom
+            const container = document.getElementById('message-container');
+            container.scrollTop = container.scrollHeight;
         }
     },
     mounted() {
         messagesRef.on("child_added", (snapshot) => {
             const message = snapshot.val();
             this.messages.push(message);
+            this.$nextTick(this.scrollToBottom); // Scroll to bottom after message is added
         });
     }
 });
