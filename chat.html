@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alternative Chatroom</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-NXahJrgXfjKfKEK9hI3YF/7wTaKZoogDZM4eQA/lV/dD9Xc3x8JY8ZIDlSsbMqvOf/aMlWzU/PPU5U5/48CxBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #111;
+      color: #fff;
+      overflow: hidden;
+    }
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .chat-container {
+      width: 400px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+    .chat-header {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .chat-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .messages-container {
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 15px;
+    }
+    .message {
+      margin-bottom: 15px;
+    }
+    .message span {
+      color: #00FF00;
+      font-weight: bold;
+    }
+    .input-container {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .input-container input {
+      width: 70%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.3);
+      color: #fff;
+      margin-right: 10px;
+    }
+    .input-container button {
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      background-color: #00FF00;
+      color: #111;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .input-container button:hover {
+      background-color: #00CC00;
+    }
+  </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<div class="container">
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>Chatroom</h2>
+    </div>
+    <div class="messages-container" id="messages-container">
+      <!-- Chat messages will be displayed here -->
+    </div>
+    <div class="input-container">
+      <input type="text" id="messageInput" placeholder="Type your message...">
+      <button id="sendButton">Send</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" integrity="sha512-1k+AYC0egyJps0XKlFfSdnujG1F9qXJN8Jg6rc0wdFTKYlPCtZr6bGek9zi6KRXy6pCm4JxTE2coHEs3JY9bJw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  particlesJS('particles-js', {
+    "particles": {
+      "number": {
+        "value": 80,
+        "density": {
+          "enable": true,
+          "value_area": 800
+        }
+      },
+      "color": {
+        "value": "#00FF00"
+      },
+      "shape": {
+        "type": "circle",
+        "stroke": {
+          "width": 0,
+          "color": "#000000"
+        },
+        "polygon": {
+          "nb_sides": 5
+        },
+        "image": {
+          "src": "img/github.svg",
+          "width": 100,
+          "height": 100
+        }
+      },
+      "opacity": {
+        "value": 0.5,
+        "random": false,
+        "anim": {
+          "enable": false,
+          "speed": 1,
+          "opacity_min": 0.1,
+          "sync": false
+        }
+      },
+      "size": {
+        "value": 3,
+        "random": true,
+        "anim": {
+          "enable": false,
+          "speed": 40,
+          "size_min": 0.1,
+          "sync": false
+        }
+      },
+      "line_linked": {
+        "enable": true,
+        "distance": 150,
+        "color": "#00FF00",
+        "opacity": 0.4,
+        "width": 1
+      },
+      "move": {
+        "enable": true,
+        "speed": 6,
+        "direction": "none",
+        "random": false,
+        "straight": false,
+        "out_mode": "out",
+        "bounce": false,
+        "attract": {
+          "enable": false,
+          "rotateX": 600,
+          "rotateY": 1200
+        }
+      }
+    },
+    "interactivity": {
+      "detect_on": "canvas",
+      "events": {
+        "onhover": {
+          "enable": true,
+          "mode": "grab"
+        },
+        "onclick": {
+          "enable": true,
+          "mode": "push"
+        },
+        "resize": true
+      },
+      "modes": {
+        "grab": {
+          "distance": 140,
+          "line_linked": {
+            "opacity": 1
+          }
+        },
+        "bubble": {
+          "distance": 400,
+          "size": 40,
+          "duration": 2,
+          "opacity": 8,
+          "speed": 3
+        },
+        "repulse": {
+          "distance": 200,
+          "duration": 0.4
+        },
+        "push": {
+          "particles_nb": 4
+        },
+        "remove": {
+          "particles_nb": 2
+        }
+      }
+    },
+    "retina_detect": true
+  });
+
+  // Socket.IO setup
+  const socket = io();
+
+  // DOM elements
+  const messageInput = document.getElementById('messageInput');
+  const sendButton = document.getElementById('sendButton');
+  const messagesContainer = document.getElementById('messages-container');
+
+  // Send message function
+  function sendMessage() {
+    const message = messageInput.value.trim();
+    if (message !== '') {
+      socket.emit('chat message', message);
+      messageInput.value = '';
+    }
+  }
+
+  // Receive message function
+  function receiveMessage(message) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    messageElement.textContent = message;
+    messagesContainer.appendChild(messageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  // Event listeners
+  sendButton.addEventListener('click', sendMessage);
+  messageInput.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  // Socket.IO event listeners
+  socket.on('chat message', receiveMessage);
+</script>
+</body>
+</html>
